@@ -3,6 +3,7 @@
 Makes vim track macOS's Appearance mode. When the mode changes this plugin will
 call a user defined hook to change vim settings for light or dark color schemes.
 
+When running on another OS falls back to changing the color mode to dark at 5 PM.
 
 
 <img src="https://github.com/nburns/vim-auto-light-dark/wiki/images/change.gif" alt="Appearance Mode Changing"/>

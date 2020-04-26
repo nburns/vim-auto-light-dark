@@ -28,29 +28,34 @@ endfunction
 
 function DesiredInterfaceMode()
     call system("which defaults")
+
     if v:shell_error ==? 0 " if we can read stuff out of defaults
         call system("defaults read -g AppleInterfaceStyle")
+
         if v:shell_error ==? 0
             return s:dark_mode
-        else
-            return s:light_mode
         endif
-    else " fallback for non macos
-        if (strftime('%H')) > 17 " is it past 5PM (night time)?
-            return s:dark_mode
-        else
-            return s:light_mode
-        endif
+
+        return s:light_mode
     endif
+
+    " fallback for non macos
+    if (strftime('%H')) > 17 " is it past 5PM (night time)?
+        return s:dark_mode
+    endif
+
+    return s:light_mode
 endfunction
 
 function SetLightDarkMode(...)
-    if g:interface_mode ==? DesiredInterfaceMode()
+    let l:desired_interface_mode = DesiredInterfaceMode()
+
+    if g:interface_mode ==? l:desired_interface_mode
         " avoid unneeded changes to prevent screen flash
         return
     endif
 
-    if DesiredInterfaceMode() ==? s:dark_mode
+    if l:desired_interface_mode ==? s:dark_mode
         call CallUserDarkMode()
     else
         call CallUserLightMode()

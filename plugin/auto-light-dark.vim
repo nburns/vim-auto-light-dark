@@ -46,7 +46,8 @@ endfunction
 
 function SetLightDarkMode(...)
     if g:interface_mode ==? DesiredInterfaceMode()
-        return " avoid unneeded changes to prevent screen flash
+        " avoid unneeded changes to prevent screen flash
+        return
     endif
 
     if DesiredInterfaceMode() ==? s:dark_mode

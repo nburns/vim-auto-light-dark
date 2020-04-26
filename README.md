@@ -10,7 +10,9 @@ call a user defined hook to change vim settings for light or dark color schemes.
 ## Installation
 
 ### Vundle
+```vim
 Plugin 'nburns/vim-auto-light-dark'
+```
 
 ## Setup
 In your `~/.vimrc` define 2 functions, one for light mode and one for dark mode.

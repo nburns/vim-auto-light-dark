@@ -39,7 +39,7 @@ function DesiredInterfaceMode()
         if (strftime('%H')) > 17 " is it past 5PM (night time)?
             return s:dark_mode
         else
-            return s:lig
+            return s:light_mode
         endif
     endif
 endfunction

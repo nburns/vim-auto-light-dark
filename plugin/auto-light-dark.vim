@@ -26,6 +26,13 @@ function CallUserLightMode()
     call call(function("LightMode"), [])
 endfunction
 
+function AfterModeChanged()
+    if exists('g:loaded_lightline')
+        call lightline#init()
+        call lightline#colorscheme()
+    endif
+endfunction
+
 function DesiredInterfaceMode()
     call system("which defaults")
 
@@ -60,6 +67,8 @@ function SetLightDarkMode(...)
     else
         call CallUserLightMode()
     endif
+
+    call AfterModeChanged()
 endfunction
 
 call SetLightDarkMode()

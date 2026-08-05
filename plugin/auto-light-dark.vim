@@ -33,20 +33,30 @@ function AfterModeChanged()
     endif
 endfunction
 
-function DesiredInterfaceMode()
-    call system("which defaults")
+call system("which defaults")
+let s:has_defaults = v:shell_error ==? 0
 
-    if v:shell_error ==? 0 " if we can read stuff out of defaults
-        call system("defaults read -g AppleInterfaceStyle")
-
-        if v:shell_error ==? 0
-            return s:dark_mode
-        endif
-
-        return s:light_mode
+function ApplyDesiredMode(desired_interface_mode)
+    if g:interface_mode ==? a:desired_interface_mode
+        " avoid unneeded changes to prevent screen flash
+        return
     endif
 
-    " fallback for non macos
+    if a:desired_interface_mode ==? s:dark_mode
+        call CallUserDarkMode()
+    else
+        call CallUserLightMode()
+    endif
+
+    call AfterModeChanged()
+endfunction
+
+function OnDefaultsExit(job, exit_status)
+    let l:desired = a:exit_status ==? 0 ? s:dark_mode : s:light_mode
+    call ApplyDesiredMode(l:desired)
+endfunction
+
+function FallbackDesiredMode()
     if (strftime('%H')) > 17 " is it past 5PM (night time)?
         return s:dark_mode
     endif
@@ -55,20 +65,14 @@ function DesiredInterfaceMode()
 endfunction
 
 function SetLightDarkMode(...)
-    let l:desired_interface_mode = DesiredInterfaceMode()
-
-    if g:interface_mode ==? l:desired_interface_mode
-        " avoid unneeded changes to prevent screen flash
+    if s:has_defaults && has('job')
+        call job_start(
+            \ ['defaults', 'read', '-g', 'AppleInterfaceStyle'],
+            \ {'exit_cb': 'OnDefaultsExit'})
         return
     endif
 
-    if l:desired_interface_mode ==? s:dark_mode
-        call CallUserDarkMode()
-    else
-        call CallUserLightMode()
-    endif
-
-    call AfterModeChanged()
+    call ApplyDesiredMode(FallbackDesiredMode())
 endfunction
 
 call SetLightDarkMode()
